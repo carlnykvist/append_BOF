@@ -1,0 +1,28 @@
+beacon_command_register(
+"append",
+"Append text to a file.",
+"Usage: append \"Text to append\" check.ps1");
+
+alias append {
+        local('$handle $data $args');
+
+        $bid = $1;
+
+        $barch  = barch($1);
+
+        # Read in the right BOF file
+        $handle = openf(script_resource("append.".$barch.".o"));
+        $data = readb($handle, -1);
+        closef($handle);
+
+        if(size(@_) < 3)
+        {
+                berror($bid, "Incorrect usage!");
+                berror($bid, beacon_command_detail("append"));
+                return;
+        }
+
+        $args = bof_pack($bid, "zz", $2, $3);     
+        beacon_inline_execute($bid, $data, "go", $args);  
+
+}
